@@ -4,6 +4,7 @@ import com.thc.sprboot.domain.Notice;
 import com.thc.sprboot.dto.DefaultDto;
 import com.thc.sprboot.dto.NoticeDto;
 import com.thc.sprboot.service.NoticeService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,11 @@ public class NoticeRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<NoticeDto.CreateResDto> create(@RequestBody NoticeDto.CreateReqDto params) {
+    public ResponseEntity<NoticeDto.CreateResDto> create(@RequestBody NoticeDto.CreateReqDto params, HttpServletRequest request) {
+
+        String hahah = (String) request.getAttribute("hahah");
+        System.out.println("hahah :" + hahah);
+
         //return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.create(params));
         return ResponseEntity.ok(noticeService.create(params));
     }
