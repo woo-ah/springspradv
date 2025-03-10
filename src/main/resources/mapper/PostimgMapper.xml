@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprboot.mapper.PostimgMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprboot.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+			,postimg.deleted
+			,postimg.process
+			,postimg.created_at as createdAt
+			,postimg.modified_at as modifiedAt
+
+			,postimg.post_id as postId
+			,postimg.url
+		FROM postimg
+		WHERE postimg.id = #{id}
+	</select>
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprboot.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		WHERE postimg.id is not NULL
+		<if test = "deleted != null">AND postimg.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postimg.post_id = #{postId}</if>
+		<if test = "orderby =='id'">ORDER BY postimg.id </if>
+		<if test = "orderby =='title'">ORDER BY postimg.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprboot.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		WHERE postimg.id is not NULL
+		<if test = "deleted != null">AND postimg.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postimg.post_id = #{postId}</if>
+		<if test = "orderby =='id'">ORDER BY postimg.id </if>
+		<if test = "orderby =='title'">ORDER BY postimg.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT COUNT(postimg.id) as listCount
+		FROM postimg
+		WHERE postimg.id is not NULL
+		<if test = "deleted != null">AND postimg.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postimg.post_id = #{postId}</if>
+		<if test = "orderby =='id'">ORDER BY postimg.id </if>
+		<if test = "orderby =='title'">ORDER BY postimg.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprboot.dto.PostimgDto$DetailResDto">
+		SELECT postimg.id
+		FROM postimg
+		WHERE postimg.id is not NULL
+		<if test = "deleted != null">AND postimg.deleted = #{deleted}</if>
+		<if test = "postId != null and postId !=''">AND postimg.post_id = #{postId}</if>
+
+		<if test = "orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > postimg.id</if>
+			ORDER BY postimg.id DESC
+		</if>
+		<if test = "orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND postimg.id > #{cursor}</if>
+			ORDER BY postimg.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+
+</mapper>

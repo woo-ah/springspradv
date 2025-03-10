@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DETAIL</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+    detail
+    <!--<button onclick="detail_notice()">DETAIL</button>-->
+
+    id : <input id="detail_notice_id" readonly="readonly"/> <br />
+
+    deleted : <input type="checkbox" id="detail_notice_deleted" name="deleted" onchange="update_notice(this)" /> <br />
+    process : <input id="detail_notice_process" name="process" onchange="update_notice(this)" /> <br />
+
+    title : <input id="detail_notice_title" name="title" onchange="update_notice(this)" /> <br />
+    content : <input id="detail_notice_content" name="content" onchange="update_notice(this)" />  <br />
+
+    <!--<button onclick="update_notice()">UPDATE</button>-->
+    <button onclick="delete_notice()">DELETE</button>
+
+    <script>
+
+        let tempUrl = window.location.href;
+        let tempId = tempUrl.substring(tempUrl.lastIndexOf("/") + 1);
+        let arrayTempId = tempId.split("?");
+        if(arrayTempId.length > 1){
+            tempId = arrayTempId[0];
+        }
+        $( document ).ready(function() {
+            detail_notice();
+        });
+
+        function detail_notice(){
+            let _param = {
+                id : tempId
+            };
+            $.ajax({
+                url: "/api/notice",
+                type: "GET",
+                contentType : 'application/json; charset=utf-8',
+                data: _param,
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                    /*$("#detail_notice_noticename").val(obj_data["noticename"]);
+                    $("#detail_notice_name").val(obj_data["name"]);
+                    $("#detail_notice_nick").val(obj_data["nick"]);
+                    $("#detail_notice_phone").val(obj_data["phone"]);*/
+
+                    //let arrayKey = ["noticename", "name", "nick", "phone"];
+                    let arrayKey = Object.keys(obj_data);
+                    for(let each of arrayKey){
+                        let tempType = $("#detail_notice_" + each).attr("type");
+                        if(tempType === "checkbox"){
+                            $("#detail_notice_" + each).prop("checked", obj_data[each]);
+                        } else {
+                            $("#detail_notice_" + each).val(obj_data[each]);
+                        }
+                    }
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+        function update_notice(obj_this) {
+            // obj_this => <input id="detail_notice_title" name="title" onchange="update_notice(this)"/>
+            let _param = {
+                id: $("#detail_notice_id").val()
+            };
+            let tempKey = $(obj_this).attr("name"); //title
+
+            let tempType = $(obj_this).attr("type");
+            if(tempType === "checkbox"){
+                _param[tempKey] = $(obj_this).prop("checked"); //실제 체크 여부
+            } else {
+                _param[tempKey] = $(obj_this).val(); //실제 담겨 있는 값
+            }
+            $.ajax({
+                url: "/api/notice",
+                type: "PUT",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr) => {
+                    /*alert(JSON.stringify(obj_data));*/
+                },
+                error: (obj_data, status, xhr) => {
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+
+        /*function update_notice(){
+            let _param = {
+                id : $("#detail_notice_id").val()
+            };
+            let arrayKey = ["title", "content"];
+            for(let each of arrayKey){
+                _param[each] = $("#detail_notice_" + each).val();
+            }
+
+            $.ajax({
+                url: "/api/notice",
+                type: "PUT",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }*/
+        function delete_notice(){
+            let _param = {
+                id: $("#detail_notice_id").val()
+            };
+            $.ajax({
+                url: "/api/notice",
+                type: "DELETE",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

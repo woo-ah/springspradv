@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprboot.mapper.NoticeMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprboot.dto.NoticeDto$DetailResDto">
+		SELECT notice.id
+			,notice.deleted
+			,notice.process
+			,notice.created_at as createdAt
+			,notice.modified_at as modifiedAt
+
+			,notice.title
+			,notice.content
+		FROM notice
+		WHERE notice.id = #{id}
+	</select>
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprboot.dto.NoticeDto$DetailResDto">
+		SELECT notice.id
+		FROM notice
+		WHERE notice.id is not NULL
+		<if test = "deleted != null">AND notice.deleted = #{deleted}</if>
+		<if test = "title != null and title !=''">AND notice.title LIKE CONCAT('%', #{title}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY notice.id </if>
+		<if test = "orderby =='title'">ORDER BY notice.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+	<!--
+	1) 정확히 타이틀이랑 일치하는 결과를 원할 때!!
+	<if test = "title != null and title !=''">AND notice.title = #{title}</if>
+	2) 타이틀 검색어 를 포함하는 결과를 원할 때!!
+	<if test = "title != null and title !=''">AND notice.title LIKE CONCAT('%', #{title}, '%')</if>
+	-->
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprboot.dto.NoticeDto$DetailResDto">
+		SELECT notice.id
+		FROM notice
+		WHERE notice.id is not NULL
+		<if test = "deleted != null">AND notice.deleted = #{deleted}</if>
+		<if test = "title != null and title !=''">AND notice.title LIKE CONCAT('%', #{title}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY notice.id </if>
+		<if test = "orderby =='title'">ORDER BY notice.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT COUNT(notice.id) as listCount
+		FROM notice
+		WHERE notice.id is not NULL
+		<if test = "deleted != null">AND notice.deleted = #{deleted}</if>
+		<if test = "title != null and title !=''">AND notice.title LIKE CONCAT('%', #{title}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY notice.id </if>
+		<if test = "orderby =='title'">ORDER BY notice.title </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprboot.dto.NoticeDto$DetailResDto">
+		SELECT notice.id
+		FROM notice
+		WHERE notice.id is not NULL
+		<if test = "deleted != null">AND notice.deleted = #{deleted}</if>
+		<if test = "title != null and title !=''">AND notice.title LIKE CONCAT('%', #{title}, '%')</if>
+
+		<if test = "orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > notice.id</if>
+			ORDER BY notice.id DESC
+		</if>
+		<if test = "orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND notice.id > #{cursor}</if>
+			ORDER BY notice.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+
+</mapper>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+index
+
+    <button onclick="list_user()">아작스 호출</button>
+
+    <script>
+        function list_user(){
+            $.ajax({
+                url: "/api/user/list",
+                type: "GET",
+                data: {},
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    // obj_data 는 JSON형태고, 현재는 리스트다
+                    alert(obj_data.length);
+                    for(let i=0;i<obj_data.length;i++){
+                        let each = obj_data[i];
+                        // obj_data[i] 를 통해 하나하나 정보에 접근 가능!
+                        alert(JSON.stringify(obj_data[i]));
+                        alert(JSON.stringify(each));
+                        // obj_data[i] 에 들어있는 사용자 아이디값을 가져올려면?
+                        let tempField = "username";
+                        alert(obj_data[i][tempField]);
+                        alert(each[tempField]);
+                    }
+                    for(let each of obj_data){
+                        alert(JSON.stringify(each));
+                    }
+                    //alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

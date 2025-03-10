@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CREATE</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+    create
+
+    title :
+    <input type="text" id="create_post_title" />
+    content :
+    <input type="text" id="create_post_content" />
+
+    <input type="file" id="input_upload_img" onchange="readURLFile(this)" multiple/>
+    업로드 이미지
+    <div id="div_create_post_imgs">
+        <!--<img src="" alt=""/>
+        <input class="create_post_imgs" value=""/>-->
+    </div>
+    <script>
+        function readURLFile(input) {
+            if (input.files && input.files[0]) {
+                //alert("files : " + input.files.length);
+                for(let each of input.files){
+                    let reader = new FileReader();
+                    reader.readAsDataURL(each);
+                    reader.onload = function(e) {
+                        let obj_file = each;
+                        uploadFile(obj_file);
+                    }
+                }
+            }
+        }
+        function uploadFile(obj_file) {
+            //파일을 서버에 전송해봅니다!!
+            let fileData = new FormData();
+            fileData.append("file", obj_file);
+
+            $.ajax({
+                url: "/api/default/uploadFile",
+                type: "POST",
+                data: fileData ,
+                cache : false,
+                contentType : false,
+                processData : false,
+                success: (data, status, xhr)=> {
+                    let url = data;
+                    //alert(xhr.status);
+                    //alert(JSON.stringify(data));
+                    $("#div_create_post_imgs").append(
+                        '<img src="'+url+'" alt="" style="width:100px"/> <input type="hidden" class="create_post_imgs" value="'+url+'"/>'
+                    );
+                },
+                error: (data) => {
+                    alert("error")
+                },
+            });
+        }
+    </script>
+
+    <button onclick="create_post()">CREATE</button>
+
+    <script>
+        function create_post(){
+            let userId = localStorage.getItem("userId");
+            if(userId == null || userId === ""){
+                alert("로그인 먼저 해주세요!");
+                location.href = "/user/login";
+                return false;
+            }
+
+            let create_post_imgs = $(".create_post_imgs");
+            let imgs = [];
+            for(let each of create_post_imgs){
+                imgs.push($(each).val());
+            }
+            let _param = {
+                userId : userId,
+                title : $("#create_post_title").val(),
+                content : $("#create_post_content").val(),
+                imgs : imgs
+            };
+
+            $.ajax({
+                url: "/api/post",
+                type: "POST",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

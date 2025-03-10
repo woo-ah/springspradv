@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0/EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thc.sprboot.mapper.UserMapper">
+
+	<!---->
+	<select id="detail" parameterType="hashMap" resultType="com.thc.sprboot.dto.UserDto$DetailResDto">
+		SELECT user.id
+			,user.deleted
+			,user.process
+			,user.created_at as createdAt
+			,user.modified_at as modifiedAt
+
+			,user.username
+			,user.name
+			,user.nick
+			,user.phone
+		FROM user
+		WHERE user.id = #{id}
+	</select>
+
+	<select id="list" parameterType="hashMap" resultType="com.thc.sprboot.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "nick != null and nick !=''">AND user.nick LIKE CONCAT('%', #{nick}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY user.id </if>
+		<if test = "orderby =='title'">ORDER BY user.nick </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+
+	<select id="pagedList" parameterType="hashMap" resultType="com.thc.sprboot.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "nick != null and nick !=''">AND user.nick LIKE CONCAT('%', #{nick}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY user.id </if>
+		<if test = "orderby =='title'">ORDER BY user.nick </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+		LIMIT #{offset}, #{perpage}
+	</select>
+	<select id="pagedListCount" parameterType="hashMap" resultType="Integer">
+		SELECT COUNT(user.id) as listCount
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "nick != null and nick !=''">AND user.nick LIKE CONCAT('%', #{nick}, '%')</if>
+		<if test = "orderby =='id'">ORDER BY user.id </if>
+		<if test = "orderby =='title'">ORDER BY user.nick </if>
+		<if test = "orderway =='desc'"> DESC</if>
+		<if test = "orderway =='asc'"> ASC</if>
+	</select>
+
+	<select id="scrollList" parameterType="hashMap" resultType="com.thc.sprboot.dto.UserDto$DetailResDto">
+		SELECT user.id
+		FROM user
+		WHERE user.id is not NULL
+		<if test = "deleted != null">AND user.deleted = #{deleted}</if>
+		<if test = "nick != null and nick !=''">AND user.nick LIKE CONCAT('%', #{nick}, '%')</if>
+
+		<if test = "orderway =='desc'">
+			<if test = "cursor != null and cursor !=''">AND #{cursor} > user.id</if>
+			ORDER BY user.id DESC
+		</if>
+		<if test = "orderway =='asc'">
+			<if test = "cursor != null and cursor !=''">AND user.id > #{cursor}</if>
+			ORDER BY user.id ASC
+		</if>
+		LIMIT 0, #{perpage}
+	</select>
+
+</mapper>

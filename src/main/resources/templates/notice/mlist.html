@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCROLL LIST</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+    scroll list
+
+    삭제여부
+    <select id="search_notice_deleted" onchange="listener_search_notice_changed()">
+        <option value="">전체</option>
+        <option value="false">일반</option>
+        <option value="true">삭제</option>
+    </select>
+
+    정렬 방향
+    <select id="search_notice_orderway" onchange="listener_search_notice_changed()">
+        <option value="" selected="selected">역방향</option>
+        <option value="asc">정방향</option>
+    </select>
+
+    검색어 :
+    <input type="text" id="search_notice_title" onchange="listener_search_notice_changed()"/>
+    한 페이지에 볼 글 수 :
+    <input type="number" id="perpage" value="" onchange="listener_search_notice_changed()"/>
+
+    cursor : <input type="text" id="cursor_notice" value="" readonly="readonly"/>
+    changed : <input type="text" id="changed_notice" value="" readonly="readonly"/>
+
+    <button onclick="list_notice()">LIST</button>
+
+    <div id="div_notice_list"></div>
+
+    <script>
+        function listener_search_notice_changed(){
+            $("#changed_notice").val("true");
+            list_notice();
+        }
+        function list_notice(){
+            let deleted = null;
+            let search_notice_deleted = $("#search_notice_deleted").val();
+            if(search_notice_deleted !== ""){
+                deleted = (search_notice_deleted === "true");
+            }
+
+            let cursor = null;
+            let cursor_notice_id = $(".cursor_notice_id");
+            if(cursor_notice_id.length > 0){
+                cursor = $(cursor_notice_id[cursor_notice_id.length - 1]).val();
+                $("#cursor_notice").val(cursor);
+            }
+
+            let changed_notice = $("#changed_notice").val();
+            let tempChanged = (changed_notice === "true");
+            if(tempChanged){
+                $("#changed_notice").val("")
+                $("#cursor_notice").val("");
+            }
+
+            //alert(deleted);
+            let _param = {
+                orderway : $("#search_notice_orderway").val(),
+                perpage : $("#perpage").val(),
+                cursor : $("#cursor_notice").val(),
+                title : $("#search_notice_title").val(),
+                deleted : deleted
+            };
+
+            $.ajax({
+                url: "/api/notice/scrollList",
+                type: "GET",
+                contentType : 'application/json; charset=utf-8',
+                data: _param,
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                    //$("#div_notice_list").html("");
+                    if(tempChanged){
+                        $("#div_notice_list").html("");
+                    }
+
+                    let noticeList = obj_data;
+                    for(let each of noticeList){
+                        let title = each["title"];
+                        let id = each["id"];
+                        $("#div_notice_list").append(
+                            "<div><a href='/notice/detail/"+id+"'>"+ each["deleted"] + "||" + id + "||" + title +"</a>" +
+                            "<input type='hidden1' class='cursor_notice_id' value='"+ id +"'/>" +
+                            "</div>"
+                        );
+                    }
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

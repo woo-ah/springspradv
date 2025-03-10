@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DETAIL</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+    detail
+    <!--<button onclick="detail_post()">DETAIL</button>-->
+
+    id : <input id="detail_post_id" readonly="readonly"/> <br />
+
+    deleted : <input type="checkbox" id="detail_post_deleted" name="deleted" onchange="update_post(this)" /> <br />
+    process : <input id="detail_post_process" name="process" onchange="update_post(this)" /> <br />
+
+    title : <input id="detail_post_title" name="title" onchange="update_post(this)" /> <br />
+    content : <input id="detail_post_content" name="content" onchange="update_post(this)" />  <br />
+    userId : <input id="detail_post_userId" name="userId" readonly="readonly"/>  <br />
+    userNick : <input id="detail_post_userNick" name="userNick" readonly="readonly"/>  <br />
+
+    이미지들
+    <div id="div_detail_post_imgs">
+        <!--<img src="" alt=""/>
+        <input class="create_post_imgs" value=""/>-->
+    </div>
+
+    <input type="file" id="input_upload_img" onchange="readURLFile(this)" multiple/>
+    <script>
+        function readURLFile(input) {
+            if (input.files && input.files[0]) {
+                //alert("files : " + input.files.length);
+                for(let each of input.files){
+                    let reader = new FileReader();
+                    reader.readAsDataURL(each);
+                    reader.onload = function(e) {
+                        let obj_file = each;
+                        uploadFile(obj_file);
+                    }
+                }
+            }
+        }
+        function uploadFile(obj_file) {
+            //파일을 서버에 전송해봅니다!!
+            let fileData = new FormData();
+            fileData.append("file", obj_file);
+
+            $.ajax({
+                url: "/api/default/uploadFile",
+                type: "POST",
+                data: fileData ,
+                cache : false,
+                contentType : false,
+                processData : false,
+                success: (data, status, xhr)=> {
+                    let url = data;
+                    create_postimg(url);
+                },
+                error: (data) => {
+                    alert("error")
+                },
+            });
+        }
+        function create_postimg(obj_url){
+            let userId = localStorage.getItem("userId");
+            if(userId == null || userId === ""){
+                alert("로그인 먼저 해주세요!");
+                location.href = "/user/login";
+                return false;
+            }
+
+            let _param = {
+                postId : $("#detail_post_id").val(),
+                url : obj_url
+            };
+
+            $.ajax({
+                url: "/api/postimg",
+                type: "POST",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                    let img = obj_data;
+                    img["url"] = obj_url;
+                    $("#div_detail_post_imgs").prepend(
+                        '<div id="div_postimg_'+img["id"]+'">' +
+                        '<img src="'+img["url"]+'" alt="" style="width:100px"/> ' +
+                        '<input type="hidden" class="create_post_imgs" value="'+img["url"]+'"/>' +
+                        '<button onclick="delete_postimg('+img["id"]+')">삭제</button>' +
+                        '</div>'
+                    );
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+    <!--<button onclick="update_post()">UPDATE</button>-->
+    <button onclick="delete_post()">DELETE</button>
+
+    <script>
+
+        let tempUrl = window.location.href;
+        let tempId = tempUrl.substring(tempUrl.lastIndexOf("/") + 1);
+        let arrayTempId = tempId.split("?");
+        if(arrayTempId.length > 1){
+            tempId = arrayTempId[0];
+        }
+        $( document ).ready(function() {
+            detail_post();
+        });
+
+        function detail_post(){
+            let _param = {
+                id : tempId
+            };
+            $.ajax({
+                url: "/api/post",
+                type: "GET",
+                contentType : 'application/json; charset=utf-8',
+                data: _param,
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                    let arrayKey = Object.keys(obj_data);
+                    for(let each of arrayKey){
+                        let tempType = $("#detail_post_" + each).attr("type");
+                        if(tempType === "checkbox"){
+                            $("#detail_post_" + each).prop("checked", obj_data[each]);
+                        } else {
+                            $("#detail_post_" + each).val(obj_data[each]);
+                        }
+                    }
+
+                    let imgs = obj_data["imgs"];
+                    alert(imgs.length);
+                    for(let img of imgs){
+                        $("#div_detail_post_imgs").append(
+                            '<div id="div_postimg_'+img["id"]+'">' +
+                            '<img src="'+img["url"]+'" alt="" style="width:100px"/> ' +
+                            '<input type="hidden" class="create_post_imgs" value="'+img["url"]+'"/>' +
+                            '<button onclick="delete_postimg('+img["id"]+')">삭제</button>' +
+                            '</div>'
+                        );
+                    }
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+        function update_post(obj_this) {
+            // obj_this => <input id="detail_post_title" name="title" onchange="update_post(this)"/>
+            let _param = {
+                id: $("#detail_post_id").val()
+            };
+            let tempKey = $(obj_this).attr("name"); //title
+
+            let tempType = $(obj_this).attr("type");
+            if(tempType === "checkbox"){
+                _param[tempKey] = $(obj_this).prop("checked"); //실제 체크 여부
+            } else {
+                _param[tempKey] = $(obj_this).val(); //실제 담겨 있는 값
+            }
+            $.ajax({
+                url: "/api/post",
+                type: "PUT",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr) => {
+                    /*alert(JSON.stringify(obj_data));*/
+                },
+                error: (obj_data, status, xhr) => {
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+
+        function delete_post(){
+            let _param = {
+                id: $("#detail_post_id").val()
+            };
+            $.ajax({
+                url: "/api/post",
+                type: "DELETE",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+        function delete_postimg(obj_id){
+            let _param = {
+                id: obj_id
+            };
+            $.ajax({
+                url: "/api/postimg",
+                type: "DELETE",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    $("#div_postimg_" + obj_id).remove();
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>

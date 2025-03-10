@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CREATE</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+</head>
+<body>
+<div>
+    create
+
+    username :
+    <input type="text" id="create_user_username" />
+    password :
+    <input type="password" id="create_user_password" />
+    name :
+    <input type="text" id="create_user_name" />
+    nick :
+    <input type="text" id="create_user_nick" />
+    phone :
+    <input type="text" id="create_user_phone" />
+
+    <button onclick="create_user()">CREATE</button>
+
+    <script>
+        function create_user(){
+            let _param = {};
+            let paramTitle = ["username", "password", "name", "nick", "phone"];
+            for(let each of paramTitle){
+                _param[each] = $("#create_user_" + each).val()
+            }
+
+            $.ajax({
+                url: "/api/user",
+                type: "POST",
+                contentType : 'application/json; charset=utf-8',
+                data: JSON.stringify(_param),
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    let id = Number(obj_data["id"]);
+                    if(id > 0){
+                        alert("등록 성공");
+                    } else if(id === -100){
+                        alert("이미 사용중인 아이디 입니다. 다른 아이디를 사용해주세요.");
+                    } else {
+                        alert("등록 실패");
+                    }
+                    //alert(JSON.stringify(obj_data));
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
+        }
+    </script>
+
+
+</div>
+</body>
+</html>
