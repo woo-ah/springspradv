@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-    UserDto.CreateResDto login(UserDto.LoginReqDto params);
+    UserDto.LoginResDto login(UserDto.LoginReqDto params);
     /**/
     UserDto.CreateResDto create(UserDto.CreateReqDto params);
     void update(UserDto.UpdateReqDto params);

@@ -17,20 +17,8 @@ public class DefaultInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info("preHandle / request [{}]", request);
+        request.setAttribute("test", "value1");
 
-        request.setAttribute("hahah", "112233");
-
-        Enumeration<String> requestNames = request.getAttributeNames();
-        while (requestNames.hasMoreElements()) {
-            String name = requestNames.nextElement();
-            logger.info("preHandle request / {} = {} ", name, request.getAttribute(name));
-        }
-
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (requestNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            logger.info("preHandle header / {} = {} ", name, request.getHeader(name));
-        }
         /*String accesstoken = request.getHeader("Authorization");
         if(accesstoken != null){
             Long userId = tokenFactory.validateAccessToken(accesstoken);
@@ -45,12 +33,14 @@ public class DefaultInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         logger.info("postHandle / request [{}]", request);
+        System.out.println("postHandle afterCtrl :" + request.getAttribute("afterCtrl"));
     }
 
     //모든것을 마친 후 실행되는 메서드
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         logger.info("afterCompletion / request [{}]", request);
+        System.out.println("afterCompletion afterCtrl :" + request.getAttribute("afterCtrl"));
     }
 
 }

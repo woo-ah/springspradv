@@ -5,6 +5,7 @@ import com.thc.sprboot.dto.DefaultDto;
 import com.thc.sprboot.dto.NoticeDto;
 import com.thc.sprboot.service.NoticeService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,15 @@ public class NoticeRestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<NoticeDto.CreateResDto> create(@RequestBody NoticeDto.CreateReqDto params, HttpServletRequest request) {
+    public ResponseEntity<NoticeDto.CreateResDto> create(@RequestBody NoticeDto.CreateReqDto params, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        String hahah = (String) request.getAttribute("hahah");
-        System.out.println("hahah :" + hahah);
+        String test = (String) request.getAttribute("test");
+        System.out.println("test :" + test);
+
+        request.setAttribute("afterCtrl", "create!!");
+        System.out.println("afterCtrl :" + request.getAttribute("afterCtrl"));
+
+        response.setHeader("token1", "112233");
 
         //return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.create(params));
         return ResponseEntity.ok(noticeService.create(params));

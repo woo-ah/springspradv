@@ -18,6 +18,14 @@ public class UserDto {
         private String username;
         private String password;
     }
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Getter
+    @Setter
+    public static class LoginResDto{
+        private String refreshToken;
+    }
 
     /**/
 

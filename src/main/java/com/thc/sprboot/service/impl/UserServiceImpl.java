@@ -6,6 +6,7 @@ import com.thc.sprboot.dto.UserDto;
 import com.thc.sprboot.mapper.UserMapper;
 import com.thc.sprboot.repository.UserRepository;
 import com.thc.sprboot.service.UserService;
+import com.thc.sprboot.util.TokenFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,13 +24,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto.CreateResDto login(UserDto.LoginReqDto params) {
+    public UserDto.LoginResDto login(UserDto.LoginReqDto params) {
         User user = userRepository.findByUsernameAndPassword(params.getUsername(), params.getPassword());
+        String refreshToken = null;
+        UserDto.LoginResDto resDto = null;
         if(user == null){
-            //아이디가 없거나, 비번이 틀렸거나..
-            return UserDto.CreateResDto.builder().id((long)-100).build();
+        } else {
+            refreshToken = new TokenFactory().generateToken(user.getId());
+            String afterValue = new TokenFactory().verifyToken(refreshToken);
+            System.out.println("afterValue: " + afterValue);
         }
-        return user.toCreateResDto();
+        return UserDto.LoginResDto.builder().refreshToken(refreshToken).build();
     }
 
     /**/

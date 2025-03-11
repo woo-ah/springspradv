@@ -31,6 +31,10 @@
                 cache: false,
                 success: (obj_data, status, xhr)=>{
                     alert(JSON.stringify(obj_data));
+
+                    let token1 = xhr.getResponseHeader("token1");
+                    alert(token1);
+
                 },
                 error: (obj_data, status, xhr)=>{
                     alert("error!!");

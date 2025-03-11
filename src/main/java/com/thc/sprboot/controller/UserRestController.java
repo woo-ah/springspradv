@@ -22,8 +22,11 @@ public class UserRestController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto.CreateResDto> login(@RequestBody UserDto.LoginReqDto params) {
-        return ResponseEntity.ok(userService.login(params));
+    public ResponseEntity<Void> login(@RequestBody UserDto.LoginReqDto params) {
+        return ResponseEntity.ok()
+                .header("RefreshToken", userService.login(params).getRefreshToken())
+                .build();
+        //return ResponseEntity.ok(userService.login(params));
     }
 
     /**/

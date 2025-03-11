@@ -39,14 +39,17 @@
                 data: JSON.stringify(_param),
                 cache: false,
                 success: (obj_data, status, xhr)=>{
-                    let id = Number(obj_data["id"]);
+                    /*let id = Number(obj_data["id"]);
                     if(id > 0){
                         alert("로그인 성공");
                         localStorage.setItem("userId", id);
                     } else {
                         alert("아이디 혹은 비밀번호가 일치하지 않습니다.");
-                    }
-                    //alert(JSON.stringify(obj_data));
+                    }*/
+                    alert(JSON.stringify(obj_data));
+                    let refreshToken = xhr.getResponseHeader("RefreshToken");
+                    alert(refreshToken);
+
                 },
                 error: (obj_data, status, xhr)=>{
                     alert("error!!");
