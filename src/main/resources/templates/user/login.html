@@ -15,6 +15,7 @@
     <input type="password" class="input_param" id="create_user_password" />
 
     <button onclick="login_user()">LOGIN</button>
+    <button onclick="accessToken_user()">GET ACCESS TOKEN</button>
     <button onclick="logout_user()">LOGOUT</button>
 
     <script>
@@ -23,6 +24,29 @@
             alert(userId);
             localStorage.removeItem("userId");
             alert(localStorage.getItem("userId"));
+        }
+        function accessToken_user(){
+            $.ajax({
+                url: "/api/auth",
+                type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Content-type", "application/json");
+                    xhr.setRequestHeader("RefreshToken", localStorage.getItem("refreshToken"));
+                },
+                contentType : 'application/json; charset=utf-8',
+                cache: false,
+                success: (obj_data, status, xhr)=>{
+                    //alert(JSON.stringify(obj_data));
+                    let accessToken = xhr.getResponseHeader("AccessToken");
+                    alert(accessToken);
+                    localStorage.setItem("accessToken", accessToken);
+
+                },
+                error: (obj_data, status, xhr)=>{
+                    alert("error!!");
+                    alert(JSON.stringify(obj_data));
+                }
+            });
         }
         function login_user(){
             let _param = {};
@@ -46,10 +70,10 @@
                     } else {
                         alert("아이디 혹은 비밀번호가 일치하지 않습니다.");
                     }*/
-                    alert(JSON.stringify(obj_data));
+                    //alert(JSON.stringify(obj_data));
                     let refreshToken = xhr.getResponseHeader("RefreshToken");
-                    alert(refreshToken);
-
+                    localStorage.setItem("refreshToken", refreshToken);
+                    alert("login success!!");
                 },
                 error: (obj_data, status, xhr)=>{
                     alert("error!!");

@@ -1,5 +1,8 @@
 package com.thc.sprboot.interceptor;
 
+import com.thc.sprboot.mapper.UserMapper;
+import com.thc.sprboot.repository.UserRepository;
+import com.thc.sprboot.util.TokenFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -13,12 +16,24 @@ public class DefaultInterceptor implements HandlerInterceptor {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private final TokenFactory tokenFactory;
+    public DefaultInterceptor(TokenFactory tokenFactory){
+        this.tokenFactory = tokenFactory;
+    }
+
     //컨트롤러 진입 전에 호출되는 메서드
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info("preHandle / request [{}]", request);
-        request.setAttribute("test", "value1");
+        String accessToken = request.getHeader("AccessToken");
 
+        logger.info("accessToken : [{}]", accessToken);
+
+        if(accessToken != null && !accessToken.isEmpty()){
+            Long userId = tokenFactory.verifyAccessToken(accessToken);
+            request.setAttribute("reqUserId", userId);
+        }
+        //request.setAttribute("test", "value1");
         /*String accesstoken = request.getHeader("Authorization");
         if(accesstoken != null){
             Long userId = tokenFactory.validateAccessToken(accesstoken);

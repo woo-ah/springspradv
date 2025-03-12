@@ -26,6 +26,10 @@
             $.ajax({
                 url: "/api/notice",
                 type: "POST",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Content-type", "application/json");
+                    xhr.setRequestHeader("AccessToken", localStorage.getItem("accessToken"));
+                },
                 contentType : 'application/json; charset=utf-8',
                 data: JSON.stringify(_param),
                 cache: false,

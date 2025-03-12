@@ -18,9 +18,11 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper){
+    private final TokenFactory tokenFactory;
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, TokenFactory tokenFactory){
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.tokenFactory = tokenFactory;
     }
 
     @Override
@@ -30,9 +32,9 @@ public class UserServiceImpl implements UserService {
         UserDto.LoginResDto resDto = null;
         if(user == null){
         } else {
-            refreshToken = new TokenFactory().generateToken(user.getId());
-            String afterValue = new TokenFactory().verifyToken(refreshToken);
-            System.out.println("afterValue: " + afterValue);
+            refreshToken = tokenFactory.generateRefreshToken(user.getId());
+            /*String afterValue = tokenFactory.verifyToken(refreshToken);
+            System.out.println("afterValue: " + afterValue);*/
         }
         return UserDto.LoginResDto.builder().refreshToken(refreshToken).build();
     }

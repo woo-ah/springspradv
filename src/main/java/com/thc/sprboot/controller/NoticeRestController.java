@@ -25,13 +25,11 @@ public class NoticeRestController {
     @PostMapping("")
     public ResponseEntity<NoticeDto.CreateResDto> create(@RequestBody NoticeDto.CreateReqDto params, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        String test = (String) request.getAttribute("test");
-        System.out.println("test :" + test);
-
-        request.setAttribute("afterCtrl", "create!!");
-        System.out.println("afterCtrl :" + request.getAttribute("afterCtrl"));
-
-        response.setHeader("token1", "112233");
+        Long reqUserId = null ;
+        if(request.getAttribute("reqUserId") != null){
+            reqUserId = (Long) request.getAttribute("reqUserId");
+        }
+        System.out.println("reqUserId :" + reqUserId);
 
         //return ResponseEntity.status(HttpStatus.CREATED).body(noticeService.create(params));
         return ResponseEntity.ok(noticeService.create(params));
