@@ -24,7 +24,7 @@ public class UserRestController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody UserDto.LoginReqDto params) {
         return ResponseEntity.ok()
-                .header("RefreshToken", userService.login(params).getRefreshToken())
+                .header("RefreshToken", userService.login(params).getRefreshToken()) //응답 바디 없이 헤더에 RefreshToken 추가
                 .build();
         //return ResponseEntity.ok(userService.login(params));
     }

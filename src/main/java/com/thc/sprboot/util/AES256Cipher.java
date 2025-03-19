@@ -9,6 +9,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+// 양방향 암호화 방식
 public class AES256Cipher {
 	public static String temp_key = "12345678901234567890123456789012";
 	// 암호화

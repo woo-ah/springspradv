@@ -39,6 +39,25 @@ public class UserServiceImpl implements UserService {
         return UserDto.LoginResDto.builder().refreshToken(refreshToken).build();
     }
 
+//week1-2코드
+//    @Override
+//    public UserDto.LoginResDto login(UserDto.LoginReqDto params) {
+//        User user = userRepository.findByUsernameAndPassword(params.getUsername(), params.getPassword());
+//        String refreshToken = null;
+//        UserDto.LoginResDto resDto = null;
+//
+//        if(user == null){
+//            // 아이디가 없거나 비밀번호가 틀렸을 때
+//            return UserDto.CreateResDto.builder().id((long)-100).build();
+//        } else {
+//            refreshToken = new TokenFactory().generateToken(user.getId()); // RefreshToken 생성
+//            String afterValue = new TokenFactory().verifyToken(refreshToken); // 토큰 검증
+//            System.out.println("afterValue: " + afterValue);
+//        }
+//
+//        return UserDto.LoginResDto.builder().refreshToken(refreshToken).build();
+//    }
+
     /**/
 
     @Override
