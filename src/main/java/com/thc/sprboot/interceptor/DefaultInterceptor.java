@@ -42,6 +42,23 @@ public class DefaultInterceptor implements HandlerInterceptor {
             }
         }*/
         return true;
+
+
+//첫날 했던 거
+//        request.setAttribute("hahah", "112233");
+//
+//        Enumeration<String> requestNames = request.getAttributeNames();
+//        while (requestNames.hasMoreElements()) {
+//            String name = requestNames.nextElement();
+//            logger.info("preHandle request / {} = {} ", name, request.getAttribute(name));
+//        }
+//
+//        Enumeration<String> headerNames = request.getHeaderNames();
+//        while (requestNames.hasMoreElements()) {
+//            String name = headerNames.nextElement();
+//            logger.info("preHandle header / {} = {} ", name, request.getHeader(name));
+//        }
+//        return true;
     }
 
     //컨트롤러 실행 후에 호출되는 메서드
