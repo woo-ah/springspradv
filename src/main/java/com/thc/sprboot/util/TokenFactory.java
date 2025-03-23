@@ -12,8 +12,8 @@ import java.util.Arrays;
 public class TokenFactory {
 
     String prefix = "Bearer/u0020"; //토큰의 접두사
-    int refreshTokenExpiredTime = 3000;
-    int accessTokenExpiredTime = 30;
+    int refreshTokenExpiredTime = 3000; // RefreshToken 유효 시간
+    int accessTokenExpiredTime = 30; //AccessToken 유효 시간
 
     private final RefreshTokenRepository refreshTokenRepository;
     public TokenFactory(RefreshTokenRepository refreshTokenRepository){
@@ -21,21 +21,21 @@ public class TokenFactory {
     }
 
     public String generateRefreshToken(Long userId){
-        String tempToken = generateToken(userId, refreshTokenExpiredTime);
-        RefreshToken refreshToken = RefreshToken.of(userId, tempToken);
-        refreshTokenRepository.save(refreshToken);
+        String tempToken = generateToken(userId, refreshTokenExpiredTime); //토큰 생성
+        RefreshToken refreshToken = RefreshToken.of(userId, tempToken); //객체 만들고
+        refreshTokenRepository.save(refreshToken); // DB에 저장
 
         return tempToken;
     }
     public Long verifyRefreshToken(String token){
-        RefreshToken refreshToken = refreshTokenRepository.findByContent(token);
+        RefreshToken refreshToken = refreshTokenRepository.findByContent(token); // DB에서 조회
         if(refreshToken == null){
-            throw new RuntimeException("no auth");
+            throw new RuntimeException("no auth"); // 없으면 불법 토큰
         }
-        String result = verifyToken(token);
+        String result = verifyToken(token); // 토큰 복호화해서 userId 꺼냄
         Long userId = refreshToken.getUserId();
 
-        if(!result.equals(userId.toString())){
+        if(!result.equals(userId.toString())){ // 정보가 일치하지 않으면 불법 토큰
             throw new RuntimeException("no auth");
         }
         return userId;
@@ -45,11 +45,11 @@ public class TokenFactory {
     }
 
     public Long verifyAccessToken(String token){
-        String result = verifyToken(token);
+        String result = verifyToken(token); // 토큰 복호화
         if(result == null){
             throw new RuntimeException("no auth");
         }
-        Long userId = Long.parseLong(result);
+        Long userId = Long.parseLong(result); // 사용자 ID 꺼냄
         return userId;
     }
 

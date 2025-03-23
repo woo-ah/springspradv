@@ -30,8 +30,8 @@ public class DefaultInterceptor implements HandlerInterceptor {
         logger.info("accessToken : [{}]", accessToken);
 
         if(accessToken != null && !accessToken.isEmpty()){
-            Long userId = tokenFactory.verifyAccessToken(accessToken);
-            request.setAttribute("reqUserId", userId);
+            Long userId = tokenFactory.verifyAccessToken(accessToken); // 토큰에서 userId 추출
+            request.setAttribute("reqUserId", userId); // 사용자 ID를 요청에 저장
         }
         //request.setAttribute("test", "value1");
         /*String accesstoken = request.getHeader("Authorization");

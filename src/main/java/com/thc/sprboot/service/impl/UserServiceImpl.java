@@ -30,13 +30,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsernameAndPassword(params.getUsername(), params.getPassword());
         String refreshToken = null;
         UserDto.LoginResDto resDto = null;
-        if(user == null){
+        if(user == null){ //// 사용자가 없으면 아무것도 안 하고 넘어감 (나중에 예외 처리 필요)
         } else {
-            refreshToken = tokenFactory.generateRefreshToken(user.getId());
+            refreshToken = tokenFactory.generateRefreshToken(user.getId()); //사용자 ID를 이용해서 RefreshToken 발급
             /*String afterValue = tokenFactory.verifyToken(refreshToken);
             System.out.println("afterValue: " + afterValue);*/
         }
-        return UserDto.LoginResDto.builder().refreshToken(refreshToken).build();
+        return UserDto.LoginResDto.builder().refreshToken(refreshToken).build(); // refreshToken을 담은 LoginResDto 객체를 생성해서 반환
     }
 
 //week1-2코드
